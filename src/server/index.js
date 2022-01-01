@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const cors = require('cors')
 const yosys2digitaljs = require('yosys2digitaljs');
 const sqlite = require('sqlite');
 const sqlite3 = require('sqlite3');
@@ -13,7 +14,9 @@ Promise.resolve((async () => {
 
     app.use(bodyParser.json({limit: '50mb'}));
 
-    app.post('/api/yosys2digitaljs', async (req, res) => {
+    // Allow CORS for preflight
+    app.options('/api/yosys2digitaljs', cors());
+    app.post('/api/yosys2digitaljs', cors(), async (req, res) => {
         try {
             const data = await yosys2digitaljs.process_files(req.body.files, req.body.options);
             yosys2digitaljs.io_ui(data.output);
